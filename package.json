@@ -1,0 +1,33 @@
+{
+  "name": "lorica",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MVP de prevención de fraude para familias en España",
+  "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @lorica/web",
+    "build": "npm run build --workspace @lorica/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build",
+    "sync:threats": "node scripts/sync-threat-intel.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  },
+  "overrides": {
+    "postcss": "8.5.25"
+  }
+}

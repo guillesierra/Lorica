@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Lorica">
+  <rect width="512" height="512" rx="116" fill="#071815"/>
+  <path d="M256 58 420 118v118c0 106-62 179-164 218C154 415 92 342 92 236V118z" fill="#1ad6a2"/>
+  <path d="M256 103 375 146v87c0 80-43 137-119 170-76-33-119-90-119-170v-87z" fill="#0b2923"/>
+  <path d="M214 167h46v132h76v43H214z" fill="#dffcf4"/>
+</svg>

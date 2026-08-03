@@ -1,0 +1,7 @@
+{
+  "generatedAt": "2026-08-03T15:22:39.747Z",
+  "sourceUrl": "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/master/phishing-domains-ACTIVE.txt",
+  "totalActiveDomains": 390794,
+  "relevantDomains": 2395,
+  "relevancePolicy": "TLD .es o token asociado a marcas/servicios españoles; no implica atribución geográfica confirmada"
+}

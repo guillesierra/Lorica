@@ -1,0 +1,32 @@
+name: Refresh threat intelligence
+
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npm run sync:threats
+      - name: Commit verified snapshot change
+        run: |
+          if git diff --quiet -- packages/knowledge/src/generated-threats.ts data/threat-intel-report.json; then
+            echo "No threat-intel changes"
+            exit 0
+          fi
+          git config user.name "lorica-threat-intel[bot]"
+          git config user.email "lorica-threat-intel[bot]@users.noreply.github.com"
+          git add packages/knowledge/src/generated-threats.ts data/threat-intel-report.json
+          git commit -m "Update threat intelligence snapshot"
+          git push

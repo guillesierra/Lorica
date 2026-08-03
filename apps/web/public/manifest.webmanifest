@@ -1,0 +1,14 @@
+{
+  "name": "Lorica — Comprueba antes de actuar",
+  "short_name": "Lorica",
+  "description": "Analizador privado de señales de fraude orientado a España",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071815",
+  "theme_color": "#071815",
+  "lang": "es",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -18,7 +18,8 @@ function riskLevelFor(score: number, findings: readonly Finding[]): RiskLevel {
       .map((item) => item.ruleId.split("_")[0])
   );
   const verifiedThreatMatch = findings.some((item) => item.ruleId === "REPUTATION_KNOWN_MALICIOUS");
-  if (score >= 75 && (verifiedThreatMatch || highSignalFamilies.size >= 2)) return "critical";
+  const userReportedThreatMatch = findings.some((item) => item.ruleId.startsWith("USER_REPORTED_MALICIOUS_"));
+  if (score >= 75 && (verifiedThreatMatch || userReportedThreatMatch || highSignalFamilies.size >= 2)) return "critical";
   if (score >= 50) return "high";
   if (score >= 25) return "medium";
   return "low";
@@ -48,9 +49,9 @@ function actionsFor(findings: readonly Finding[]): string[] {
 export function analyzeMessage(text: string, options: AnalysisOptions = {}): AnalysisResult {
   const normalizedText = text.trim();
   const findings = [
-    ...inspectUrls(normalizedText, options.knownMaliciousDomains ?? [], options.knownMaliciousUrls ?? []),
-    ...inspectSender(options.sender, options.knownMaliciousPhones ?? []),
-    ...inspectPhones(normalizedText, options.knownMaliciousPhones ?? []),
+    ...inspectUrls(normalizedText, options.knownMaliciousDomains ?? [], options.knownMaliciousUrls ?? [], options.userReportedMaliciousDomains ?? []),
+    ...inspectSender(options.sender, options.knownMaliciousPhones ?? [], options.userReportedMaliciousPhones ?? []),
+    ...inspectPhones(normalizedText, options.knownMaliciousPhones ?? [], options.userReportedMaliciousPhones ?? []),
     ...inspectText(normalizedText)
   ].sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity] || b.weight - a.weight);
 

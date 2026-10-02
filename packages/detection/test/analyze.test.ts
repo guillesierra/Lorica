@@ -48,6 +48,36 @@ describe("analyzeMessage", () => {
     expect(result.riskLevel).toBe("high");
   });
 
+  it("flags user-reported banking fraud domains with explicit provenance", () => {
+    const result = analyzeMessage("Verifica tu acceso en https://www.santander-ayuda.com/es", {
+      userReportedMaliciousDomains: ["santander-ayuda.com"]
+    });
+    const report = result.findings.find((item) => item.ruleId === "USER_REPORTED_MALICIOUS_DOMAIN");
+    expect(report?.severity).toBe("critical");
+    expect(report?.detail).toContain("reporte aportado por el usuario");
+    expect(result.riskLevel).toBe("critical");
+  });
+
+  it("flags each screenshot-reported URL even when its brand is not recognizable", () => {
+    for (const domain of ["es.incidencia-santander.com", "particulares-inicio.net"]) {
+      const result = analyzeMessage(`Consulta tu cuenta: https://${domain}/`, {
+        userReportedMaliciousDomains: [domain]
+      });
+      expect(result.riskLevel).toBe("critical");
+      expect(result.findings.some((item) => item.ruleId === "USER_REPORTED_MALICIOUS_DOMAIN")).toBe(true);
+    }
+  });
+
+  it("flags a user-reported phone found in an SMS without treating it as caller-ID proof", () => {
+    const result = analyzeMessage("Si no reconoces la operación llama al 919598345.", {
+      userReportedMaliciousPhones: ["+34919598345"]
+    });
+    const report = result.findings.find((item) => item.ruleId === "USER_REPORTED_MALICIOUS_PHONE");
+    expect(report?.severity).toBe("critical");
+    expect(report?.detail).toContain("identificador de llamada puede suplantarse");
+    expect(result.riskLevel).toBe("critical");
+  });
+
   it("only raises critical when strong independent signals cross the gate", () => {
     const result = analyzeMessage("URGENTE: instala AnyDesk, confirma tu contraseña y código SMS y haz un Bizum en https://banco-seguro.example/login");
     expect(result.score).toBeGreaterThanOrEqual(75);

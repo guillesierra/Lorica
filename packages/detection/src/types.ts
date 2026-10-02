@@ -22,6 +22,8 @@ export interface AnalysisOptions {
   knownMaliciousDomains?: readonly string[];
   knownMaliciousUrls?: readonly string[];
   knownMaliciousPhones?: readonly string[];
+  userReportedMaliciousDomains?: readonly string[];
+  userReportedMaliciousPhones?: readonly string[];
   sender?: string;
   now?: Date;
 }

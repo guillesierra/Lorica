@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { analyzeMessage, type AnalysisResult, type RiskLevel } from "@lorica/detection";
-import { threatSnapshot } from "@lorica/knowledge";
+import { threatSnapshot, userReportedMaliciousDomains, userReportedMaliciousPhones } from "@lorica/knowledge";
 
 const examples = [
   {
@@ -20,6 +20,22 @@ const examples = [
   {
     label: "Falsa Seguridad Social",
     text: "Seg Social: Tiene una actualizacion pendiente. Consulte su informacion y gestione el tramite correspondiente. https://seg-pocpcxa-es.online/Y8PIv8"
+  },
+  {
+    label: "Falso SMS de Santander",
+    text: "INFO: Se acaba de tramitar una operación online desde un nuevo dispositivo. Si no reconoce este acceso verifique en https://www.santander-ayuda.com/es"
+  },
+  {
+    label: "Falsa transferencia bancaria",
+    text: "Se ha realizado una transferencia por importe elevado. Si no reconoce este movimiento verifique: https://es.incidencia-santander.com/"
+  },
+  {
+    label: "Falso acceso desde otro móvil",
+    text: "Has iniciado sesión desde otro móvil. Si no reconoce esta actividad elimine el móvil siguiendo el enlace: https://particulares-inicio.net"
+  },
+  {
+    label: "Falso teléfono del banco",
+    text: "Si no reconoces la operación, llama al 919598345."
   }
 ] as const;
 
@@ -50,6 +66,8 @@ export function Analyzer() {
     setResult(analyzeMessage(text, {
       knownMaliciousDomains: threatSnapshot.domains,
       knownMaliciousUrls: threatSnapshot.urls,
+      userReportedMaliciousDomains,
+      userReportedMaliciousPhones,
       sender: sender.trim()
     }));
   }

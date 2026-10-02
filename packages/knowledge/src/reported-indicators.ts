@@ -6,7 +6,7 @@ export interface UserReportedIndicator {
   brand: string;
   campaign: string;
   channel: "SMS";
-  source: "user-provided screenshot";
+  source: "user-provided screenshot" | "user-provided SMS";
 }
 
 // User-provided evidence. These indicators are not independently verified by Lorica.
@@ -50,6 +50,14 @@ export const userReportedIndicators: readonly UserReportedIndicator[] = [
     campaign: "Número de llamada incluido en un falso aviso de transferencia",
     channel: "SMS",
     source: "user-provided screenshot"
+  },
+  {
+    type: "phone",
+    value: "+34667751941",
+    brand: "Ruralvía (suplantación alegada en el mensaje)",
+    campaign: "Falsa alerta de transferencia con petición de llamada",
+    channel: "SMS",
+    source: "user-provided SMS"
   }
 ] as const;
 

@@ -43,7 +43,7 @@ export const trustedBrands: readonly BrandDefinition[] = [
   },
   {
     name: "CaixaBank",
-    tokens: ["caixabank", "lacaixa"],
+    tokens: ["caixabank", "lacaixa", "la caixa"],
     officialDomains: ["caixabank.es"]
   },
   {
@@ -63,13 +63,18 @@ export const trustedBrands: readonly BrandDefinition[] = [
   },
   {
     name: "ING",
-    tokens: ["ingdirect", "ingbank"],
+    tokens: ["ing", "ingdirect", "ingbank"],
     officialDomains: ["ing.es"]
   },
   {
     name: "ABANCA",
     tokens: ["abanca"],
     officialDomains: ["abanca.com"]
+  },
+  {
+    name: "Ruralvía / Caja Rural",
+    tokens: ["ruralvia", "cajarural", "caja rural"],
+    officialDomains: ["ruralvia.com"]
   },
   {
     name: "Iberdrola",
@@ -82,6 +87,9 @@ export const trustedBrands: readonly BrandDefinition[] = [
     officialDomains: ["endesa.com", "energiaxxi.com"]
   }
 ] as const;
+
+const bankBrandNames = new Set(["BBVA", "CaixaBank", "Banco Santander", "Bankinter", "Banco Sabadell", "ING", "ABANCA", "Ruralvía / Caja Rural"]);
+export const trustedBankBrands = trustedBrands.filter((brand) => bankBrandNames.has(brand.name));
 
 export function isOfficialDomain(hostname: string, officialDomains: readonly string[]): boolean {
   const host = hostname.toLowerCase().replace(/^www\./, "").replace(/\.$/, "");

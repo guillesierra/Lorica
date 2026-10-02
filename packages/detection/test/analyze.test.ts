@@ -78,6 +78,30 @@ describe("analyzeMessage", () => {
     expect(result.riskLevel).toBe("critical");
   });
 
+  it("flags money-related messages that ask the user to call a number", () => {
+    const result = analyzeMessage("Para una transferencia bancaria utiliza el código de seguridad. Si no la reconoces, llama al 667751941.", {
+      userReportedMaliciousPhones: ["+34667751941"]
+    });
+    expect(result.findings.some((item) => item.ruleId === "MONEY_WITH_CALL_OR_DATA_REQUEST")).toBe(true);
+    expect(result.findings.some((item) => item.ruleId === "USER_REPORTED_MALICIOUS_PHONE")).toBe(true);
+  });
+
+  it("flags money-related messages that request sensitive data", () => {
+    const result = analyzeMessage("Hay una transferencia pendiente. Confirma tus datos bancarios para continuar.");
+    expect(result.findings.some((item) => item.ruleId === "MONEY_WITH_CALL_OR_DATA_REQUEST")).toBe(true);
+  });
+
+  it("flags bank-branded links outside the bank domain list", () => {
+    const suspicious = analyzeMessage("BBVA: confirma tu cuenta en https://cuenta-segura.example/login");
+    expect(suspicious.findings.some((item) => item.ruleId === "BANK_LINK_DOMAIN_MISMATCH")).toBe(true);
+
+    const official = analyzeMessage("BBVA: consulta tu cuenta en https://www.bbva.es/");
+    expect(official.findings.some((item) => item.ruleId === "BANK_LINK_DOMAIN_MISMATCH")).toBe(false);
+
+    const ruralvia = analyzeMessage("Ruralvía: consulta tu cuenta en https://cajarural.ruralvia.com/");
+    expect(ruralvia.findings.some((item) => item.ruleId === "BANK_LINK_DOMAIN_MISMATCH")).toBe(false);
+  });
+
   it("only raises critical when strong independent signals cross the gate", () => {
     const result = analyzeMessage("URGENTE: instala AnyDesk, confirma tu contraseña y código SMS y haz un Bizum en https://banco-seguro.example/login");
     expect(result.score).toBeGreaterThanOrEqual(75);

@@ -1,4 +1,4 @@
-import { isOfficialDomain, trustedBrands } from "./brands";
+import { isOfficialDomain, trustedBankBrands, trustedBrands } from "./brands";
 import { extractIndicators, extractUrls, normalizeHostname } from "./extract";
 import type { Finding } from "./types";
 import { confusableSkeleton, hasInvisibleOrDirectionalCharacters, hasMixedRelevantScripts } from "./unicode";
@@ -248,6 +248,18 @@ const textRules: readonly TextRule[] = [
 ] as const;
 
 export function inspectText(text: string): Finding[] {
+  const urls = extractUrls(text);
+  const hosts = urls.map(normalizeHostname).filter((host): host is string => host !== null);
+  const foldedText = text.toLocaleLowerCase("es-ES").normalize("NFD").replace(/\p{M}/gu, "");
+  const mentionedBank = trustedBankBrands.find((brand) => brand.tokens.some((token) => {
+    const foldedToken = token.toLocaleLowerCase("es-ES").normalize("NFD").replace(/\p{M}/gu, "");
+    if (foldedToken.length <= 3) return new RegExp(`(^|[^\\p{L}\\p{N}])${foldedToken}($|[^\\p{L}\\p{N}])`, "u").test(foldedText);
+    return foldedText.includes(foldedToken);
+  }));
+  const mismatchedBankHost = mentionedBank && hosts.find((host) => !isOfficialDomain(host, mentionedBank.officialDomains));
+  const moneyMention = /\b(?:dinero|transferencia|operaci[oó]n|cargo|pago|euros?|eur|saldo|cuenta bancaria)\b|€/iu.test(text);
+  const requestedCall = /\b(?:llama|llamar|llame|llámanos|llamanos|contacta|contactar)\b/iu.test(text) && extractIndicators(text).some((item) => item.type === "phone");
+  const requestedSensitiveData = /\b(?:facilita|facilitar|env[ií]a|enviar|confirma|confirmar|introduce|indica|proporciona|proporcionar|comparte|compartir|utiliza|utilizar|usa|usar)\b.{0,55}\b(?:datos personales|datos bancarios|contraseñas?|claves?|c[oó]digos?(?: de seguridad| sms| de un solo uso)?|pin|cvv|dni|tarjeta)\b/iu.test(text);
   const socialSecurityImpersonation = /\bseg(?:uridad)?[\s.-]*social\b/iu.test(text)
     && /\b(?:actualizaci[oó]n|pendiente|tr[aá]mite|informaci[oó]n|datos)\b/iu.test(text)
     && extractUrls(text).length > 0;
@@ -262,6 +274,27 @@ export function inspectText(text: string): Finding[] {
       "No uses el enlace recibido. Entra en Importass o en la sede oficial escribiendo la dirección por separado.",
       "high",
       22
+    ));
+  }
+  if (mismatchedBankHost && mentionedBank) {
+    findings.push(finding(
+      "BANK_LINK_DOMAIN_MISMATCH",
+      `El enlace no usa un dominio oficial de ${mentionedBank.name}`,
+      `La comunicación menciona ${mentionedBank.name}, pero el enlace apunta a ${mismatchedBankHost}, que no está en la lista local de dominios oficiales. Un dominio no incluido no prueba por sí solo que el mensaje sea fraudulento; verifica desde la app o web oficial.`,
+      `No abras el enlace. Accede a ${mentionedBank.name} desde su aplicación o escribe manualmente uno de sus dominios oficiales.`,
+      "high",
+      26,
+      mismatchedBankHost
+    ));
+  }
+  if (moneyMention && (requestedCall || requestedSensitiveData)) {
+    findings.push(finding(
+      "MONEY_WITH_CALL_OR_DATA_REQUEST",
+      "Combina dinero con una llamada o petición de datos",
+      "Una operación o cantidad de dinero junto a una petición de llamar a un número del mensaje o facilitar datos sensibles es una señal fuerte compatible con smishing/vishing. El análisis del texto no confirma quién controla el número.",
+      "No llames al número del mensaje ni compartas claves, códigos o datos. Contacta con tu banco usando su aplicación o teléfono oficial.",
+      "high",
+      26
     ));
   }
   return findings;

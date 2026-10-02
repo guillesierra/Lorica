@@ -36,6 +36,10 @@ const examples = [
   {
     label: "Falso teléfono del banco",
     text: "Si no reconoces la operación, llama al 919598345."
+  },
+  {
+    label: "Ruralvía: falsa llamada",
+    text: "Para una transferencia bancaria, utiliza el código de seguridad. Nunca lo compartas. Si no reconoces esta operación, llama inmediatamente al +34 667 751 941."
   }
 ] as const;
 

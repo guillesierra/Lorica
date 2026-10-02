@@ -63,6 +63,18 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     sourceUrl: "https://www.incibe.es/ciudadania/avisos/campana-de-smishing-que-suplanta-entidades-bancarias-solicitando-que-les-llames"
   },
   {
+    id: "incibe-banco-prestamo-2025-10",
+    publishedAt: "2025-10-14",
+    title: "Falso préstamo online en nombre de un banco",
+    impersonates: "Entidad bancaria",
+    channels: ["Web", "Email", "Llamada"],
+    techniques: ["suplantación bancaria", "préstamo falso", "pago anticipado"],
+    requestedDataOrAction: "Solicitar un préstamo en una web fraudulenta y seguir instrucciones de pago o entrega de datos",
+    severity: "alta",
+    sourceTitle: "Préstamo online fraudulento suplantando a una entidad bancaria (caso real 017)",
+    sourceUrl: "https://www.incibe.es/linea-de-ayuda-en-ciberseguridad/casos-reales"
+  },
+  {
     id: "incibe-dgt-2025-09",
     publishedAt: "2025-09-16",
     title: "Falsas multas de tráfico por SMS y correo",
@@ -157,6 +169,18 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     severity: "alta",
     sourceTitle: "Campañas que suplantan entidades bancarias a través de smishing",
     sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectadas-campanas-que-suplantan-la-identidad-de-varias-entidades-bancarias"
+  },
+  {
+    id: "incibe-banco-cargos-2023-06",
+    publishedAt: "2023-06-28",
+    title: "Falsos cargos y bloqueo de cuentas bancarias",
+    impersonates: "Entidades bancarias",
+    channels: ["SMS", "Web"],
+    techniques: ["smishing", "falso cargo", "bloqueo de cuenta", "robo de credenciales"],
+    requestedDataOrAction: "Abrir el enlace, iniciar sesión y facilitar claves bancarias ante un supuesto cargo",
+    severity: "alta",
+    sourceTitle: "Campañas de suplantación de entidades bancarias con falsos cargos y bloqueo de cuentas",
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campanas-de-suplantacion-de-entidades-bancarias-con-falsos-cargos-y-bloqueo-de"
   },
   {
     id: "incibe-correos-2023-11",

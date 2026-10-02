@@ -18,7 +18,7 @@ export const trustedBrands: readonly BrandDefinition[] = [
   },
   {
     name: "Seguridad Social",
-    tokens: ["seguridadsocial", "segsocial", "tgss"],
+    tokens: ["seguridadsocial", "segsocial", "seg-social", "seg social", "tgss"],
     officialDomains: ["seg-social.es", "sede.seg-social.gob.es"]
   },
   {

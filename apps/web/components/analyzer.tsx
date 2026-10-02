@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { analyzeMessage, type AnalysisResult, type RiskLevel } from "@lorica/detection";
 import { threatSnapshot } from "@lorica/knowledge";
 
@@ -16,14 +16,18 @@ const examples = [
   {
     label: "URL con letra cambiada",
     text: "Correos: falta el número de su calle. Actualice ahora en https://cоrreos-entrega.example/actualizar" // The first o is Cyrillic.
+  },
+  {
+    label: "Falsa Seguridad Social",
+    text: "Seg Social: Tiene una actualizacion pendiente. Consulte su informacion y gestione el tramite correspondiente. https://seg-pocpcxa-es.online/Y8PIv8"
   }
 ] as const;
 
 const riskCopy: Record<RiskLevel, { label: string; title: string; color: string }> = {
-  low: { label: "Riesgo bajo", title: "No vemos señales fuertes", color: "#28e0aa" },
-  medium: { label: "Precaución", title: "Conviene verificarlo", color: "#ffbf69" },
-  high: { label: "Riesgo alto", title: "Hay señales importantes", color: "#ff817b" },
-  critical: { label: "Riesgo crítico", title: "No actúes todavía", color: "#ff5d67" }
+  low: { label: "Riesgo bajo", title: "No vemos señales fuertes", color: "#648875" },
+  medium: { label: "Precaución", title: "Conviene verificarlo", color: "#a17b42" },
+  high: { label: "Riesgo alto", title: "Hay señales importantes", color: "#a75f59" },
+  critical: { label: "Riesgo crítico", title: "No actúes todavía", color: "#914b50" }
 };
 
 export function Analyzer() {
@@ -31,6 +35,13 @@ export function Analyzer() {
   const [sender, setSender] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
+  const resultRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!result) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    resultRef.current?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  }, [result]);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -106,7 +117,7 @@ export function Analyzer() {
       </section>
 
       {result && meta ? (
-        <section className="result shell" aria-live="polite" aria-labelledby="result-title">
+        <section ref={resultRef} className="result shell" aria-live="polite" aria-labelledby="result-title">
           <div className="result-head">
             <div className="score-ring" style={{ "--score": result.score, "--score-color": meta.color } as CSSProperties}>
               <div className="score-value">{result.score}<small>sobre 100</small></div>

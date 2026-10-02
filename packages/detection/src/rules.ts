@@ -216,7 +216,21 @@ const textRules: readonly TextRule[] = [
 ] as const;
 
 export function inspectText(text: string): Finding[] {
-  return textRules.flatMap((rule) => rule.pattern.test(text)
+  const socialSecurityImpersonation = /\bseg(?:uridad)?[\s.-]*social\b/iu.test(text)
+    && /\b(?:actualizaci[oó]n|pendiente|tr[aá]mite|informaci[oó]n|datos)\b/iu.test(text)
+    && extractUrls(text).length > 0;
+  const findings = textRules.flatMap((rule) => rule.pattern.test(text)
     ? [finding(rule.id, rule.title, rule.detail, rule.recommendation, rule.severity, rule.weight)]
     : []);
+  if (socialSecurityImpersonation) {
+    findings.push(finding(
+      "SOCIAL_SECURITY_LINK_IMPERSONATION",
+      "Enlace asociado a una supuesta gestión de Seguridad Social",
+      "El mensaje menciona una actualización o trámite de Seguridad Social e incluye un enlace. Esto puede ser una suplantación; el texto por sí solo no verifica el dominio ni su estado.",
+      "No uses el enlace recibido. Entra en Importass o en la sede oficial escribiendo la dirección por separado.",
+      "high",
+      22
+    ));
+  }
+  return findings;
 }

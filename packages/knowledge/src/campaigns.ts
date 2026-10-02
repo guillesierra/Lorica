@@ -75,6 +75,30 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     sourceUrl: "https://www.incibe.es/linea-de-ayuda-en-ciberseguridad/casos-reales"
   },
   {
+    id: "policia-inversion-callcenter-2025-07",
+    publishedAt: "2025-07-02",
+    title: "Falsas inversiones captadas por redes sociales y call centers",
+    impersonates: "Empresas de inversión y asesores financieros",
+    channels: ["Redes sociales", "Web", "Llamada"],
+    techniques: ["publicidad engañosa", "plataforma de inversión falsa", "falsos asesores", "control remoto", "estafa de recuperación"],
+    requestedDataOrAction: "Facilitar datos de contacto, instalar herramientas de control remoto y realizar aportaciones crecientes para inversiones inexistentes",
+    severity: "crítica",
+    sourceTitle: "Desarticulada una red criminal por estafar más de 10.000.000 de euros a centenares de personas desde callcenters de Barcelona",
+    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16603"
+  },
+  {
+    id: "policia-vishing-bizum-inverso-2025-06",
+    publishedAt: "2025-06-07",
+    title: "Falso empleado bancario y solicitud de Bizum inverso",
+    impersonates: "Empleados y sistemas de seguridad bancarios; compradores en plataformas de segunda mano",
+    channels: ["Llamada", "SMS", "Web"],
+    techniques: ["vishing", "suplantación del banco", "Bizum inverso", "falso aviso de cargos", "spoofing del número"],
+    requestedDataOrAction: "Seguir instrucciones para transferir fondos o aceptar una solicitud de pago creyendo que se recibe dinero",
+    severity: "crítica",
+    sourceTitle: "La Policía Nacional desarticula una organización criminal que estafó más de 480.000 euros mediante vishing",
+    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16577&idiomaActual=es"
+  },
+  {
     id: "incibe-dgt-2025-09",
     publishedAt: "2025-09-16",
     title: "Falsas multas de tráfico por SMS y correo",

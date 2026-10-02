@@ -8,6 +8,8 @@ const shorteners = new Set([
   "rb.gy", "rebrand.ly", "shorturl.at", "tiny.cc", "buff.ly", "lnkd.in"
 ]);
 const suspiciousTlds = new Set(["top", "xyz", "click", "live", "shop", "info", "icu", "buzz", "rest", "fit", "quest", "cam", "zip", "mov"]);
+// Supplied by the user as a confirmed fraud example; not independently verified by Lorica.
+const userReportedMaliciousDomains = new Set(["seg-pocpcxa-es.online"]);
 
 function finding(
   ruleId: string,
@@ -95,6 +97,17 @@ export function inspectUrls(text: string, knownMaliciousDomains: readonly string
     });
     if (matchedKnown) {
       add(finding("REPUTATION_KNOWN_MALICIOUS", "Coincide con un dominio de phishing conocido", "El dominio figura en el registro local de inteligencia de amenazas. Las listas pueden contener errores o quedar desactualizadas.", "No abras el enlace. Contrasta la comunicación por un canal oficial y reporta un posible falso positivo si procede.", "critical", 55, hostname));
+    }
+    if (userReportedMaliciousDomains.has(hostname)) {
+      add(finding(
+        "USER_REPORTED_MALICIOUS_DOMAIN",
+        "Dominio reportado como fraudulento",
+        "Este dominio fue identificado como fraude en un reporte aportado por el usuario. No se ha corroborado de forma independiente con una fuente pública.",
+        "No abras el enlace ni facilites datos. Accede a Seguridad Social escribiendo la dirección oficial por separado y reporta el SMS a INCIBE (017).",
+        "critical",
+        75,
+        hostname
+      ));
     }
     const canonicalCandidate = canonicalUrl(candidate);
     const matchedUrl = canonicalCandidate && knownUrlSet.has(canonicalCandidate);

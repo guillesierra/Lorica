@@ -1,8 +1,10 @@
-export type CampaignChannel = "SMS" | "WhatsApp" | "Email" | "Llamada" | "Web" | "Redes sociales";
+export type CampaignChannel = "SMS" | "WhatsApp" | "Email" | "Llamada" | "Web" | "Redes sociales" | "Plataforma de compraventa" | "Cajero" | "App bancaria";
+export type CampaignEvidence = "official" | "victim-report";
 
 export interface ScamCampaign {
   id: string;
   publishedAt: string;
+  incidentAt?: string;
   title: string;
   impersonates: string;
   channels: readonly CampaignChannel[];
@@ -11,6 +13,8 @@ export interface ScamCampaign {
   severity: "media" | "alta" | "crítica";
   sourceTitle: string;
   sourceUrl: string;
+  evidence: CampaignEvidence;
+  messageExample?: string;
 }
 
 export const scamCampaigns: readonly ScamCampaign[] = [
@@ -24,7 +28,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Acceder a una falsa notificación tributaria",
     severity: "alta",
     sourceTitle: "La Agencia Tributaria NO ha emitido ninguna comunicación dirigida a usted",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-agencia-tributaria-no-ha-emitido-ninguna-comunicacion-dirigida-usted"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-agencia-tributaria-no-ha-emitido-ninguna-comunicacion-dirigida-usted",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Tiene una notificación pendiente de la Agencia Tributaria. Consulte su expediente’. No es una transcripción literal."
   },
   {
     id: "incibe-aeat-dehu-2026-02",
@@ -36,7 +42,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Abrir una notificación falsa y facilitar información",
     severity: "alta",
     sourceTitle: "Notificaciones falsas que suplantan a la Agencia Tributaria (AEAT) y a la DEHú",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/notificaciones-falsas-que-suplantan-la-agencia-tributaria-aeat-y-la-direccion"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/notificaciones-falsas-que-suplantan-la-agencia-tributaria-aeat-y-la-direccion",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Tiene una notificación electrónica pendiente. Acceda para consultar el aviso’. No es una transcripción literal."
   },
   {
     id: "incibe-paquetes-2025-12",
@@ -48,7 +56,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Completar dirección y datos de tarjeta",
     severity: "alta",
     sourceTitle: "Campaña de smishing que suplanta a empresas de paquetería",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campana-de-smishing-que-suplanta-empresas-de-paqueteria-con-la-excusa-de-que"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campana-de-smishing-que-suplanta-empresas-de-paqueteria-con-la-excusa-de-que",
+    evidence: "official",
+    messageExample: "Ejemplo basado en el aviso de INCIBE: ‘No se ha podido entregar su paquete por falta del número de casa. Actualice la dirección para recibirlo’."
   },
   {
     id: "incibe-banco-callback-2025-09",
@@ -60,7 +70,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Llamar al teléfono del mensaje y revelar claves o autorizar operaciones",
     severity: "alta",
     sourceTitle: "Campaña de smishing que suplanta a entidades bancarias solicitando que les llames",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campana-de-smishing-que-suplanta-entidades-bancarias-solicitando-que-les-llames"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campana-de-smishing-que-suplanta-entidades-bancarias-solicitando-que-les-llames",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Se ha detectado una operación sospechosa. Llame al teléfono indicado para cancelarla’. Nunca incluyas ni uses el número recibido."
   },
   {
     id: "incibe-banco-prestamo-2025-10",
@@ -72,7 +84,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Solicitar un préstamo en una web fraudulenta y seguir instrucciones de pago o entrega de datos",
     severity: "alta",
     sourceTitle: "Préstamo online fraudulento suplantando a una entidad bancaria (caso real 017)",
-    sourceUrl: "https://www.incibe.es/linea-de-ayuda-en-ciberseguridad/casos-reales"
+    sourceUrl: "https://www.incibe.es/linea-de-ayuda-en-ciberseguridad/casos-reales",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Préstamo preconcedido; complete sus datos y abone una tasa previa para liberar el dinero’."
   },
   {
     id: "policia-inversion-callcenter-2025-07",
@@ -84,7 +98,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Facilitar datos de contacto, instalar herramientas de control remoto y realizar aportaciones crecientes para inversiones inexistentes",
     severity: "crítica",
     sourceTitle: "Desarticulada una red criminal por estafar más de 10.000.000 de euros a centenares de personas desde callcenters de Barcelona",
-    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16603"
+    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16603",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Un asesor te ayudará a invertir en una empresa conocida; instala esta aplicación para configurar tu cuenta’."
   },
   {
     id: "policia-vishing-bizum-inverso-2025-06",
@@ -96,7 +112,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Seguir instrucciones para transferir fondos o aceptar una solicitud de pago creyendo que se recibe dinero",
     severity: "crítica",
     sourceTitle: "La Policía Nacional desarticula una organización criminal que estafó más de 480.000 euros mediante vishing",
-    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16577&idiomaActual=es"
+    sourceUrl: "https://www.policia.es/_es/comunicacion_prensa_detalle.php?ID=16577&idiomaActual=es",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Somos seguridad de tu banco; vemos cargos no reconocidos. Sigue estos pasos para proteger tu dinero’."
   },
   {
     id: "incibe-dgt-2025-09",
@@ -108,7 +126,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Pagar una multa inexistente y facilitar tarjeta",
     severity: "alta",
     sourceTitle: "La DGT no está enviando correos ni SMS para notificar multas de tráfico",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-dgt-no-esta-enviando-correos-ni-sms-para-notificar-multas-de-trafico"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-dgt-no-esta-enviando-correos-ni-sms-para-notificar-multas-de-trafico",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Tiene una multa pendiente. Pague hoy para evitar un recargo’."
   },
   {
     id: "incibe-falso-hijo-2025-05",
@@ -120,7 +140,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Continuar por WhatsApp y realizar una transferencia o Bizum",
     severity: "alta",
     sourceTitle: "¿Has recibido un mensaje desde un número desconocido que dice ser tu hijo?",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/has-recibido-un-mensaje-desde-un-numero-desconocido-que-dice-ser-tu-hijo"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/has-recibido-un-mensaje-desde-un-numero-desconocido-que-dice-ser-tu-hijo",
+    evidence: "official",
+    messageExample: "‘Hola mamá, mi teléfono está roto. Tengo un número temporal. No puedo llamar. ¿Puedes escribirme por WhatsApp?’ (texto público atribuido a un intento recibido; se omite el teléfono)."
   },
   {
     id: "incibe-dgt-pago-2025-04",
@@ -132,7 +154,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Introducir datos personales, tarjeta y PIN",
     severity: "alta",
     sourceTitle: "Distribución de notificaciones de multas falsas suplantando a la DGT",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/distribucion-de-notificaciones-de-multas-falsas-por-correo-y-mensaje-suplantando"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/distribucion-de-notificaciones-de-multas-falsas-por-correo-y-mensaje-suplantando",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Último aviso de sanción. Confirme sus datos personales y la tarjeta para tramitar el pago’."
   },
   {
     id: "incibe-dgt-dni-2024-11",
@@ -144,7 +168,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Subir una imagen del DNI y pagar una multa",
     severity: "alta",
     sourceTitle: "La DGT no está solicitando una imagen de tu DNI para pagar una multa",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-dgt-no-esta-solicitando-traves-de-una-web-una-imagen-de-tu-dni-para-pagar-una"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/la-dgt-no-esta-solicitando-traves-de-una-web-una-imagen-de-tu-dni-para-pagar-una",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Suba una foto de su DNI para confirmar la multa pendiente’."
   },
   {
     id: "incibe-dgt-oleadas-2024-08",
@@ -156,7 +182,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Pagar antes de un supuesto incremento de la sanción",
     severity: "alta",
     sourceTitle: "Varias oleadas de SMS y correos fraudulentos suplantando a la DGT",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/varias-oleadas-de-sms-y-correos-fraudulentos-suplantando-la-dgt-inundan-las"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/varias-oleadas-de-sms-y-correos-fraudulentos-suplantando-la-dgt-inundan-las",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Pague en 24 horas para evitar un recargo en su multa’."
   },
   {
     id: "incibe-correos-2024-06",
@@ -168,7 +196,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Completar datos personales, tarjeta y supuesto código SMS",
     severity: "media",
     sourceTitle: "Correos no está enviando mensajes por una incidencia con tu paquete",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/correos-no-esta-enviando-mensajes-para-comunicarte-que-existe-una-incidencia-con"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/correos-no-esta-enviando-mensajes-para-comunicarte-que-existe-una-incidencia-con",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Su paquete está retenido por una incidencia en la dirección. Pague una pequeña tasa para reprogramar la entrega’."
   },
   {
     id: "incibe-aeat-renta-2024-04",
@@ -180,7 +210,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Introducir nombre, tarjeta, CVV y PIN",
     severity: "media",
     sourceTitle: "Suplantación de la Agencia Tributaria vía SMS durante la Renta 2023",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/suplantacion-de-la-agencia-tributaria-sms-durante-el-periodo-de-presentacion-de"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/suplantacion-de-la-agencia-tributaria-sms-durante-el-periodo-de-presentacion-de",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Tiene derecho a una devolución de la Renta. Confirme sus datos bancarios’."
   },
   {
     id: "incibe-bancos-2024-01",
@@ -192,7 +224,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Iniciar sesión en una falsa banca online",
     severity: "alta",
     sourceTitle: "Campañas que suplantan entidades bancarias a través de smishing",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectadas-campanas-que-suplantan-la-identidad-de-varias-entidades-bancarias"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectadas-campanas-que-suplantan-la-identidad-de-varias-entidades-bancarias",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Hemos detectado un acceso desde un nuevo dispositivo. Verifique su cuenta para evitar el bloqueo’."
   },
   {
     id: "incibe-banco-cargos-2023-06",
@@ -204,7 +238,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Abrir el enlace, iniciar sesión y facilitar claves bancarias ante un supuesto cargo",
     severity: "alta",
     sourceTitle: "Campañas de suplantación de entidades bancarias con falsos cargos y bloqueo de cuentas",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campanas-de-suplantacion-de-entidades-bancarias-con-falsos-cargos-y-bloqueo-de"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/campanas-de-suplantacion-de-entidades-bancarias-con-falsos-cargos-y-bloqueo-de",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Se ha realizado un cargo que no reconocemos. Acceda para bloquear su cuenta’."
   },
   {
     id: "incibe-correos-2023-11",
@@ -216,7 +252,9 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Actualizar información de entrega en una web falsa",
     severity: "media",
     sourceTitle: "Detectada campaña de suplantación a Correos por medio de phishing",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectada-campana-de-suplantacion-correos-por-medio-de-phishing-cuidado"
+    sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectada-campana-de-suplantacion-correos-por-medio-de-phishing-cuidado",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Actualice la información de entrega para completar el envío de su paquete’."
   },
   {
     id: "guardia-civil-bec-2024-01",
@@ -228,6 +266,136 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     requestedDataOrAction: "Pagar facturas alteradas a una cuenta controlada por los estafadores",
     severity: "crítica",
     sourceTitle: "La Guardia Civil desarticula una red que estafó más de 112.000 euros a una empresa segoviana",
-    sourceUrl: "https://www.incibe.es/incibe-cert/publicaciones/bitacora-de-seguridad/la-guardia-civil-de-segovia-desarticula-una-red-de-estafadores-por"
+    sourceUrl: "https://www.incibe.es/incibe-cert/publicaciones/bitacora-de-seguridad/la-guardia-civil-de-segovia-desarticula-una-red-de-estafadores-por",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: correo de proveedor conocido con factura o cuenta bancaria modificada; confirme cualquier cambio de cuenta llamando a un contacto previamente conocido."
+  },
+  {
+    id: "guardia-civil-marketplace-fraud-2025-12",
+    publishedAt: "2025-12-23",
+    title: "Falsos compradores y vendedores en plataformas de segunda mano",
+    impersonates: "Compradores y vendedores de plataformas de compraventa",
+    channels: ["Plataforma de compraventa", "WhatsApp"],
+    techniques: ["identidad usurpada", "prepago", "Bizum", "transferencia", "producto que nunca llega"],
+    requestedDataOrAction: "Pagar por adelantado o entregar productos con el pretexto de una venta",
+    severity: "alta",
+    sourceTitle: "50 detenidos por cometer estafas online a más de 400 personas",
+    sourceUrl: "https://web.guardiacivil.es/es/destacados/noticias/50-detenidos-por-cometer-estafas-online-a-mas-de-400-personas/",
+    evidence: "official",
+    messageExample: "Ejemplo ilustrativo: ‘Te hago el pago ahora, pero para recibirlo confirma esta solicitud de Bizum’. Una solicitud de cobro no es un ingreso."
+  },
+  {
+    id: "guardia-civil-sms-thread-bank-2026-06",
+    publishedAt: "2026-06-21",
+    title: "SMS falsos insertados en el hilo real del banco y falsa cancelación",
+    impersonates: "Entidad bancaria y departamento de seguridad",
+    channels: ["SMS", "Llamada"],
+    techniques: ["smishing", "suplantación de hilo SMS", "vishing", "códigos de banca online", "transferencia de salida"],
+    requestedDataOrAction: "Llamar al teléfono del SMS e introducir códigos con la excusa de cancelar una transferencia",
+    severity: "crítica",
+    sourceTitle: "Esclarecida una estafa que introducía SMS falsos entre los mensajes de texto legítimos de un banco",
+    sourceUrl: "https://web.guardiacivil.es/es/destacados/noticias/Esclarecida-una-estafa-que-introducia-SMS-falsos-entre-los-mensajes-de-texto-legitimos-de-un-banco/",
+    evidence: "official",
+    messageExample: "Paráfrasis del caso publicado: ‘Detectamos una transferencia inmediata no reconocida. Llame a seguridad para cancelarla’. El falso agente pide códigos para ‘proteger’ la cuenta."
+  },
+  {
+    id: "victim-report-whatsapp-task-scam-2024-12",
+    publishedAt: "2024-12-16",
+    title: "Relato de víctima: tareas prepago por WhatsApp y Bizum",
+    impersonates: "Supuestos empleadores o plataformas de tareas",
+    channels: ["WhatsApp", "Redes sociales"],
+    techniques: ["microganancia inicial", "tareas prepago", "escalada de aportaciones", "difusión a contactos"],
+    requestedDataOrAction: "Enviar Bizums para desbloquear tareas o recuperar el saldo prometido",
+    severity: "alta",
+    sourceTitle: "Sara, afectada por una estafa en la que le prometían ganar millones de euros a cambio de un trabajo fácil",
+    sourceUrl: "https://www.telecinco.es/noticias/sociedad/20241216/tardear-sara-afectada-prometian-millones-calvario-estafa_18_014299396.html",
+    evidence: "victim-report",
+    messageExample: "Paráfrasis del testimonio publicado: contacto por WhatsApp ofrece tareas sencillas; una primera aportación pequeña parece generar ganancias, pero después exigen nuevos pagos para completar tareas y recuperar lo invertido."
+  },
+  {
+    id: "victim-report-ticket-cash-code-2025-05",
+    publishedAt: "2025-05-15",
+    title: "Relato de víctima: falsa reventa de entradas con código de retirada en cajero",
+    impersonates: "Vendedora de entradas en una red social",
+    channels: ["Redes sociales", "WhatsApp", "Cajero"],
+    techniques: ["perfil de venta falso", "presión por escasez", "código de retirada de efectivo"],
+    requestedDataOrAction: "Generar y compartir desde la app bancaria un código para retirar efectivo en cajero",
+    severity: "crítica",
+    sourceTitle: "Estafan a una madrileña en la reventa de entradas para Bad Bunny usando un método de pago cada vez más habitual",
+    sourceUrl: "https://www.cope.es/actualidad/economia/noticias/transferencia-bizum-estafan-madrilena-reventa-entradas-bad-bunny-usando-metodo-pago-vez-habitual-20250515_3150047.html",
+    evidence: "victim-report",
+    messageExample: "Paráfrasis del caso publicado: perfil ofrece entradas; tras generar confianza pide un código de retirada de efectivo desde la aplicación bancaria en lugar de un pago protegido."
+  },
+  {
+    id: "victim-report-vigo-bank-phishing-2024-07",
+    publishedAt: "2026-03-26",
+    incidentAt: "2024-07-01",
+    title: "Relato en juicio: SMS bancario, web falsa y llamada de seguimiento",
+    impersonates: "Banco y supuesto soporte de seguridad",
+    channels: ["SMS", "Web", "Llamada"],
+    techniques: ["phishing", "robo de contraseña", "bloqueo de app", "vishing", "extracción por Bizum y efectivo"],
+    requestedDataOrAction: "Introducir credenciales en una web enlazada y después facilitar más datos durante una llamada",
+    severity: "crítica",
+    sourceTitle: "Juicio por una ciberestafa en Vigo: «Me pedían muchos datos, desconfié pero me vaciaron la cuenta»",
+    sourceUrl: "https://www.lavozdegalicia.es/noticia/vigo/2026/03/26/juicio-ciberestafa-vigo-me-pedian-datos-desconfie-me-vaciaron-cuenta/0003_202603202603261774530489424.htm",
+    evidence: "victim-report",
+    messageExample: "Paráfrasis del relato: un SMS que parecía del banco enlaza a una página que solicita la contraseña; luego llaman alegando un acceso desde otro móvil y piden más datos."
+  },
+  {
+    id: "victim-report-familiar-new-phone-2024-01",
+    publishedAt: "2024-01-23",
+    title: "Intento reportado: familiar con teléfono roto y número temporal",
+    impersonates: "Hijo o hija",
+    channels: ["SMS", "WhatsApp"],
+    techniques: ["suplantación familiar", "número nuevo", "desvío a mensajería", "petición posterior de dinero"],
+    requestedDataOrAction: "Continuar la conversación en WhatsApp y, en fases posteriores, enviar dinero por Bizum o transferencia",
+    severity: "alta",
+    sourceTitle: "Jordi Évole avisa a la Policía de la estafa del teléfono roto",
+    sourceUrl: "https://www.infobae.com/espana/2024/01/23/jordi-evole-avisa-a-la-policia-de-la-estafa-del-telefono-roto-me-llego-el-martes-a-mi-telefono/",
+    evidence: "victim-report",
+    messageExample: "Mensaje publicado, con datos de contacto omitidos: ‘Hola mamá, mi teléfono está roto. Tengo un número temporal. No puedo llamar. ¿Puedes escribirme por WhatsApp?’"
+  },
+  {
+    id: "victim-report-bogus-bank-refund-bizum-2024-08",
+    publishedAt: "2024-08-21",
+    title: "Relato de víctima: falsa alerta bancaria y supuesta reclamación mediante Bizum",
+    impersonates: "Banco y agente antifraude",
+    channels: ["SMS", "Llamada"],
+    techniques: ["falsa alerta de cargo", "caller-ID suplantado", "Bizums autorizados bajo pretexto de devolución"],
+    requestedDataOrAction: "Llamar o usar la app y autorizar Bizums para recuperar cargos que no habían ocurrido",
+    severity: "crítica",
+    sourceTitle: "La reportera de TardeAR, Nuria Grau, ha sido víctima de una estafa por Bizum",
+    sourceUrl: "https://www.telecinco.es/television/20240821/reportera-tardear-nuria-grau-bizum-estafa_18_013280330.html",
+    evidence: "victim-report",
+    messageExample: "Paráfrasis del testimonio: SMS alerta de movimientos sospechosos; después un supuesto agente indica que la devolución debe tramitarse autorizando varios Bizums."
+  },
+  {
+    id: "victim-report-whatsapp-neighbour-2024-09",
+    publishedAt: "2024-09-16",
+    title: "Relato de víctima: WhatsApp clonado de un vecino pide Bizum urgente",
+    impersonates: "Vecino conocido",
+    channels: ["WhatsApp"],
+    techniques: ["secuestro de cuenta", "suplantación de contacto conocido", "petición escalonada de pagos"],
+    requestedDataOrAction: "Enviar uno o varios Bizums creyendo ayudar a un vecino de confianza",
+    severity: "alta",
+    sourceTitle: "La historia de Núria, víctima de una nueva estafa por WhatsApp",
+    sourceUrl: "https://www.catalunyapress.es/articulo/sociedad/2024-09-16/4998408-historia-nuria-victima-nueva-estafa-whatsapp-hara-desconfiar-todo",
+    evidence: "victim-report",
+    messageExample: "Paráfrasis del relato: un WhatsApp que parece pertenecer al vecino pide un Bizum porque supuestamente no funciona su cuenta; tras el primer pago llega una segunda petición."
+  },
+  {
+    id: "victim-report-bank-thread-call-2025-10",
+    publishedAt: "2026-04-08",
+    incidentAt: "2025-10-31",
+    title: "Relato de víctima: falso departamento antifraude en el hilo SMS del banco",
+    impersonates: "Entidad bancaria y departamento antifraude",
+    channels: ["SMS", "Llamada", "App bancaria"],
+    techniques: ["spoofing del remitente", "hilo SMS existente", "llamada urgente", "transferencia a supuesta cuenta segura"],
+    requestedDataOrAction: "Entrar en la app y transferir saldo a una cuenta supuestamente abierta para proteger los fondos",
+    severity: "crítica",
+    sourceTitle: "Ser víctima d'una estafa bancària: m'explicaven coses sobre phishing mentre em buidaven el compte",
+    sourceUrl: "https://cadenaser.com/cataluna/2026/04/08/ser-victima-duna-estafa-bancaria-mexplicaven-coses-sobre-phishing-i-estafes-mentre-em-buidaven-el-compte-sercat/",
+    evidence: "victim-report",
+    messageExample: "Mensaje recibido (catalán; omitimos cualquier dato personal): ‘Truca quan puguis, hi ha una bretxa de seguretat’ [‘Llama cuando puedas, hay una brecha de seguridad’]. Luego el falso agente pidió mover el dinero."
   }
 ] as const;

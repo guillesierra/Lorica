@@ -143,6 +143,8 @@ textarea::placeholder { color: #87959e; }
 .campaign-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .75rem; }
 .campaign-card h2 { margin: 0; font-size: 1.25rem; letter-spacing: -.025em; }
 .campaign-card p { margin: 0; color: var(--muted); font-size: .88rem; }
+.message-example { margin: 0; padding: 12px 14px; border-left: 3px solid var(--mint); border-radius: 8px; background: rgba(232,238,241,.65); color: var(--ink); font-size: .84rem; line-height: 1.55; }
+.message-example strong { display: inline-block; margin-bottom: 4px; font-size: .76rem; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag { padding: 4px 8px; border-radius: 999px; color: #526777; background: #e8eef1; font-size: .7rem; }
 .source-link { margin-top: auto; color: var(--mint-soft); font-size: .82rem; text-underline-offset: 3px; }

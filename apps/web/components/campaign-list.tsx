@@ -14,7 +14,7 @@ export function CampaignList() {
       const matchesChannel = filter === "Todas" || campaign.channels.includes(filter);
       const searchable = [campaign.title, campaign.impersonates, campaign.requestedDataOrAction, ...campaign.channels, ...campaign.techniques].join(" ").toLocaleLowerCase("es");
       return matchesChannel && (!normalizedQuery || searchable.includes(normalizedQuery));
-    });
+    }).sort((left, right) => right.publishedAt.localeCompare(left.publishedAt));
   }, [filter, query]);
 
   return (
@@ -34,16 +34,19 @@ export function CampaignList() {
           <article className="campaign-card" key={campaign.id}>
             <div className="campaign-meta">
               <time dateTime={campaign.publishedAt}>{new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(`${campaign.publishedAt}T12:00:00Z`))}</time>
+              {campaign.incidentAt ? <span>Hechos: {new Intl.DateTimeFormat("es-ES", { month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${campaign.incidentAt}T12:00:00Z`))}</span> : null}
               <span>Importancia {campaign.severity}</span>
+              <span>{campaign.evidence === "victim-report" ? "Relato publicado · no verificado independientemente" : "Aviso o actuación oficial"}</span>
             </div>
             <h2>{campaign.title}</h2>
             <p><strong>Suplanta a:</strong> {campaign.impersonates}</p>
             <p><strong>Busca:</strong> {campaign.requestedDataOrAction}</p>
+            {campaign.messageExample ? <blockquote className="message-example"><strong>Mensaje reportado o ejemplo</strong><br />{campaign.messageExample}</blockquote> : null}
             <div className="tag-row">
               {campaign.channels.map((channel) => <span className="tag" key={channel}>{channel}</span>)}
               {campaign.techniques.map((technique) => <span className="tag" key={technique}>{technique}</span>)}
             </div>
-            <a className="source-link" href={campaign.sourceUrl} target="_blank" rel="noreferrer">Ver aviso o fuente oficial</a>
+            <a className="source-link" href={campaign.sourceUrl} target="_blank" rel="noreferrer">{campaign.evidence === "victim-report" ? "Ver relato publicado (no verificado independientemente)" : "Ver fuente oficial"}</a>
           </article>
         ))}
       </div>

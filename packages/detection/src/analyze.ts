@@ -55,8 +55,10 @@ export function analyzeMessage(text: string, options: AnalysisOptions = {}): Ana
     ...inspectText(normalizedText)
   ].sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity] || b.weight - a.weight);
 
-  const rawScore = findings.reduce((total, item) => total + item.weight, 0);
-  const score = Math.min(100, rawScore);
+  const rawScore = findings.reduce((total, item) => total + (item.severity === "low" || item.severity === "info" ? item.weight * 2 : item.weight), 0);
+  const needsElevatedCaution = findings.some((item) => item.ruleId === "DELIVERY_CUSTOMS_PAYMENT_REQUEST")
+    && findings.some((item) => item.ruleId === "MONEY_REQUESTED_VIA_BIZUM_PHONE");
+  const score = needsElevatedCaution ? Math.min(74, Math.max(rawScore, 50)) : Math.min(100, rawScore);
   const riskLevel = riskLevelFor(score, findings);
 
   return {

@@ -91,6 +91,20 @@ describe("analyzeMessage", () => {
     expect(result.findings.some((item) => item.ruleId === "MONEY_WITH_CALL_OR_DATA_REQUEST")).toBe(true);
   });
 
+  it("raises customs parcel messages asking for a Bizum payment to at least medium risk", () => {
+    const result = analyzeMessage("para liberar su paquete en la aduana tiene que pagar 100 eur a este numero por bizum, 682828929");
+    expect(result.score).toBeGreaterThanOrEqual(50);
+    expect(result.riskLevel).toBe("high");
+    expect(result.findings.some((item) => item.ruleId === "DELIVERY_CUSTOMS_PAYMENT_REQUEST")).toBe(true);
+    expect(result.findings.some((item) => item.ruleId === "MONEY_REQUESTED_VIA_BIZUM_PHONE")).toBe(true);
+  });
+
+  it("doubles the score contribution of low and informational findings", () => {
+    const result = analyzeMessage(`Revisa esta ruta ${"x".repeat(145)} en https://example.org/${"x".repeat(145)}`);
+    expect(result.findings.some((item) => item.severity === "low" || item.severity === "info")).toBe(true);
+    expect(result.score).toBeGreaterThanOrEqual(result.findings.reduce((sum, item) => sum + item.weight, 0));
+  });
+
   it("flags bank-branded links outside the bank domain list", () => {
     const suspicious = analyzeMessage("BBVA: confirma tu cuenta en https://cuenta-segura.example/login");
     expect(suspicious.findings.some((item) => item.ruleId === "BANK_LINK_DOMAIN_MISMATCH")).toBe(true);

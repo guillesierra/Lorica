@@ -258,6 +258,9 @@ export function inspectText(text: string): Finding[] {
   }));
   const mismatchedBankHost = mentionedBank && hosts.find((host) => !isOfficialDomain(host, mentionedBank.officialDomains));
   const moneyMention = /\b(?:dinero|transferencia|operaci[oó]n|cargo|pago|euros?|eur|saldo|cuenta bancaria)\b|€/iu.test(text);
+  const moneyAmount = /(?:\b\d+(?:[.,]\d{1,2})?\s*(?:€|euros?|eur)\b|\b(?:€|eur)\s*\d+(?:[.,]\d{1,2})?\b)/iu.test(text);
+  const asksBizumToPhone = /\b(?:bizum|pago|pagar|abona(?:r)?|ingresa(?:r)?|transferencia)\b/iu.test(text)
+    && extractIndicators(text).some((item) => item.type === "phone");
   const requestedCall = /\b(?:llama|llamar|llame|llámanos|llamanos|contacta|contactar)\b/iu.test(text) && extractIndicators(text).some((item) => item.type === "phone");
   const requestedSensitiveData = /\b(?:facilita|facilitar|env[ií]a|enviar|confirma|confirmar|introduce|indica|proporciona|proporcionar|comparte|compartir|utiliza|utilizar|usa|usar)\b.{0,55}\b(?:datos personales|datos bancarios|contraseñas?|claves?|c[oó]digos?(?: de seguridad| sms| de un solo uso)?|pin|cvv|dni|tarjeta)\b/iu.test(text);
   const socialSecurityImpersonation = /\bseg(?:uridad)?[\s.-]*social\b/iu.test(text)
@@ -266,6 +269,29 @@ export function inspectText(text: string): Finding[] {
   const findings = textRules.flatMap((rule) => rule.pattern.test(text)
     ? [finding(rule.id, rule.title, rule.detail, rule.recommendation, rule.severity, rule.weight)]
     : []);
+  if (/\b(?:aduana|aduanas|paquete|env[ií]o|entrega)\b/iu.test(text)
+    && /\b(?:liberar|retirar|entregar|aduan[ao]s?)\b/iu.test(text)
+    && moneyAmount
+    && /\b(?:pagar|pago|abona(?:r)?|bizum|transferencia)\b/iu.test(text)) {
+    findings.push(finding(
+      "DELIVERY_CUSTOMS_PAYMENT_REQUEST",
+      "Exige un pago para liberar un paquete o superar aduanas",
+      "Los mensajes inesperados que condicionan la entrega a un pago deben verificarse con la empresa de transporte desde su web o aplicación oficial. El texto por sí solo no permite confirmar quién lo envió.",
+      "No pagues ni contactes con los datos del mensaje. Consulta el seguimiento y cualquier tasa directamente en el canal oficial del transportista o de Aduanas.",
+      "high",
+      22
+    ));
+  }
+  if (moneyAmount && asksBizumToPhone) {
+    findings.push(finding(
+      "MONEY_REQUESTED_VIA_BIZUM_PHONE",
+      "Pide enviar dinero por Bizum a un teléfono",
+      "Una cantidad concreta junto a un pago por Bizum a un número incluido en el mensaje es una señal de riesgo elevada, especialmente si se presenta como tasa o trámite inesperado. No demuestra por sí sola que el titular del número cometa fraude.",
+      "No envíes el Bizum hasta verificar la deuda y el destinatario por un canal oficial e independiente.",
+      "high",
+      28
+    ));
+  }
   if (socialSecurityImpersonation) {
     findings.push(finding(
       "SOCIAL_SECURITY_LINK_IMPERSONATION",
@@ -295,6 +321,16 @@ export function inspectText(text: string): Finding[] {
       "No llames al número del mensaje ni compartas claves, códigos o datos. Contacta con tu banco usando su aplicación o teléfono oficial.",
       "high",
       26
+    ));
+  }
+  if (moneyMention && /\bbizum\b/iu.test(text) && extractIndicators(text).some((item) => item.type === "phone")) {
+    findings.push(finding(
+      "MONEY_WITH_BIZUM_PHONE",
+      "Asocia un pago o trámite económico con un teléfono de Bizum",
+      "La combinación de dinero, Bizum y un número de teléfono merece verificación reforzada; los textos y números pueden suplantarse y esto no identifica al titular real.",
+      "No pagues al número recibido. Confirma el importe y el beneficiario directamente con la entidad o empresa por sus canales oficiales.",
+      "high",
+      24
     ));
   }
   return findings;

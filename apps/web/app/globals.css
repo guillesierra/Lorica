@@ -65,6 +65,12 @@ nav .account-link { color: var(--mint-soft); border: 1px solid rgba(40, 224, 170
 .privacy-pill::before { content: "●"; color: var(--mint); margin-right: 6px; }
 textarea { width: 100%; min-height: 220px; resize: vertical; border: 0; outline: 0; padding: 18px 20px; color: var(--ink); background: transparent; font-size: 1.02rem; line-height: 1.65; }
 textarea::placeholder { color: #66847c; }
+.sender-label { display: block; padding: 12px 20px 0; color: #d4e6e0; font-size: .88rem; font-weight: 700; }
+.sender-input { width: calc(100% - 40px); min-height: 46px; margin: 8px 20px 0; padding: 10px 12px; color: var(--ink); background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: 10px; outline: none; }
+.sender-input:focus-visible { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(40,224,170,.12); }
+.sender-input::placeholder { color: #66847c; }
+.sender-note { margin: 9px 20px 16px; color: var(--muted); font-size: .78rem; }
+.sender-note a { color: var(--mint-soft); }
 .input-footer { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 14px 16px; border-top: 1px solid var(--line); background: rgba(255,255,255,0.022); }
 .char-count { color: #6f8d85; font-size: 0.78rem; }
 .primary-button, .secondary-button, .sample-button, .auth-button { min-height: 46px; border: 0; border-radius: 13px; cursor: pointer; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
@@ -128,6 +134,10 @@ textarea::placeholder { color: #66847c; }
 .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
 .filter-button { min-height: 40px; padding: 0 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; background: transparent; cursor: pointer; }
 .filter-button.active, .filter-button:hover { color: #062019; background: var(--mint); border-color: var(--mint); }
+.campaign-search-label { display: block; margin-bottom: 7px; color: #d4e6e0; font-size: .84rem; font-weight: 700; }
+.campaign-search { width: min(100%, 520px); min-height: 44px; padding: 9px 12px; color: var(--ink); background: rgba(255,255,255,.035); border: 1px solid var(--line); border-radius: 10px; outline: none; }
+.campaign-search:focus-visible { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(40,224,170,.12); }
+.campaign-count { color: var(--muted); font-size: .8rem; }
 .campaign-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding-bottom: 90px; }
 .campaign-card { display: flex; flex-direction: column; gap: 14px; min-height: 300px; padding: 23px; border: 1px solid var(--line); border-radius: 19px; background: linear-gradient(145deg, rgba(16,42,36,.82), rgba(8,24,20,.82)); }
 .campaign-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .75rem; }
@@ -148,6 +158,7 @@ textarea::placeholder { color: #66847c; }
 .method-content p, .method-content li { color: var(--muted); }
 .code-example { padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: #06110f; font: .83rem ui-monospace, SFMono-Regular, Consolas, monospace; color: #c7ddd7; overflow-wrap: anywhere; }
 .callout { padding: 18px; border-left: 3px solid var(--mint); border-radius: 0 13px 13px 0; background: rgba(40,224,170,.06); color: #bfd8d1; }
+.warning-callout { border-color: var(--amber); background: rgba(255,191,105,.07); }
 
 .account-layout { display: grid; grid-template-columns: 1fr .8fr; gap: 20px; padding-bottom: 90px; }
 .account-card { padding: 28px; border: 1px solid var(--line); border-radius: 21px; background: rgba(12,31,26,.78); }

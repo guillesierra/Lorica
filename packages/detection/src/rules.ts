@@ -1,5 +1,5 @@
 import { isOfficialDomain, trustedBrands } from "./brands";
-import { extractUrls, normalizeHostname } from "./extract";
+import { extractIndicators, extractUrls, normalizeHostname } from "./extract";
 import type { Finding } from "./types";
 import { confusableSkeleton, hasInvisibleOrDirectionalCharacters, hasMixedRelevantScripts } from "./unicode";
 
@@ -56,8 +56,20 @@ function brandForSuspiciousHost(hostname: string, rawHost: string) {
   });
 }
 
-export function inspectUrls(text: string, knownMaliciousDomains: readonly string[]): Finding[] {
+function canonicalUrl(value: string): string | null {
+  try {
+    const url = new URL(value.startsWith("www.") ? `https://${value}` : value.includes("://") ? value : `https://${value}`);
+    url.search = "";
+    url.hash = "";
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+export function inspectUrls(text: string, knownMaliciousDomains: readonly string[], knownMaliciousUrls: readonly string[] = []): Finding[] {
   const findings: Finding[] = [];
+  const knownUrlSet = new Set(knownMaliciousUrls.map(canonicalUrl).filter((value): value is string => value !== null));
   const emitted = new Set<string>();
   const add = (item: Finding) => {
     const key = `${item.ruleId}:${item.evidence ?? ""}`;
@@ -83,6 +95,11 @@ export function inspectUrls(text: string, knownMaliciousDomains: readonly string
     });
     if (matchedKnown) {
       add(finding("REPUTATION_KNOWN_MALICIOUS", "Coincide con un dominio de phishing conocido", "El dominio figura en el registro local de inteligencia de amenazas. Las listas pueden contener errores o quedar desactualizadas.", "No abras el enlace. Contrasta la comunicación por un canal oficial y reporta un posible falso positivo si procede.", "critical", 55, hostname));
+    }
+    const canonicalCandidate = canonicalUrl(candidate);
+    const matchedUrl = canonicalCandidate && knownUrlSet.has(canonicalCandidate);
+    if (matchedUrl) {
+      add(finding("REPUTATION_KNOWN_MALICIOUS_URL", "El host y la ruta coinciden con una URL reportada", "El host y la ruta aparecen en el snapshot local; los parámetros no se comparan y pueden cambiar el destino o el comportamiento. La fuente comunitaria puede contener errores o estar desactualizada.", "No abras ni reenvíes el enlace. Contrasta el aviso por un canal oficial y reporta un posible falso positivo.", "high", 30, canonicalCandidate));
     }
     if (/^(?:\d{1,3}\.){3}\d{1,3}$/u.test(hostname) || /^\[[0-9a-f:]+\]$/iu.test(hostname)) {
       add(finding("URL_IP_LITERAL", "La URL usa una dirección IP", "Los servicios de confianza normalmente usan un dominio reconocible, no una IP escrita directamente.", "No introduzcas datos; busca el sitio oficial por separado.", "high", 24, hostname));
@@ -135,6 +152,41 @@ export function inspectUrls(text: string, knownMaliciousDomains: readonly string
     }
   }
 
+  return findings;
+}
+
+export function inspectSender(sender: string | undefined, knownMaliciousPhones: readonly string[] = []): Finding[] {
+  if (!sender?.trim()) return [];
+  const value = sender.trim();
+  const digits = value.replace(/\D/gu, "");
+  if (!/^(?:34)?[6789]\d{8}$/u.test(digits)) return [];
+  const normalized = digits.startsWith("34") ? `+${digits}` : `+34${digits}`;
+  const match = knownMaliciousPhones.some((phone) => phone.replace(/\D/gu, "") === digits);
+  if (match) {
+    return [finding("REPUTATION_KNOWN_MALICIOUS_PHONE", "El número aparece en el registro local de reportes", "El número figura en un listado de reportes cuya procedencia debe consultarse. Caller ID puede suplantarse y los números pueden reasignarse.", "No devuelvas la llamada ni facilites datos. Verifica la entidad por su canal oficial y revisa la fecha y fuente del reporte.", "high", 35, normalized)];
+  }
+  const national = digits.startsWith("34") ? digits.slice(2) : digits;
+  if (/^80[367]\d{6}$/u.test(national) || /^905\d{6}$/u.test(national)) {
+    return [finding("PHONE_PREMIUM_RATE_NUMBER", "El número puede tener tarificación adicional", "El prefijo es compatible con numeración de tarificación adicional en España. Esto no demuestra que sea fraudulento, pero devolver la llamada podría generar cargos.", "No llames a un número incluido en un mensaje inesperado. Busca el teléfono oficial de la entidad.", "high", 18, normalized)];
+  }
+  if (/^90[12]\d{6}$/u.test(national)) {
+    return [finding("PHONE_SHARED_COST_NUMBER", "El número puede tener coste compartido o especial", "El prefijo puede implicar condiciones de coste distintas a una llamada geográfica ordinaria. No determina quién controla el número.", "Confirma el teléfono en una fuente oficial antes de llamar.", "medium", 8, normalized)];
+  }
+  return [];
+}
+
+export function inspectPhones(text: string, knownMaliciousPhones: readonly string[] = []): Finding[] {
+  const findings: Finding[] = [];
+  const emitted = new Set<string>();
+  for (const indicator of extractIndicators(text).filter((item) => item.type === "phone")) {
+    for (const item of inspectSender(indicator.value, knownMaliciousPhones)) {
+      const key = `${item.ruleId}:${item.evidence ?? ""}`;
+      if (!emitted.has(key)) {
+        emitted.add(key);
+        findings.push(item);
+      }
+    }
+  }
   return findings;
 }
 

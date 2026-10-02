@@ -1,5 +1,5 @@
 import { extractIndicators } from "./extract";
-import { inspectText, inspectUrls } from "./rules";
+import { inspectPhones, inspectSender, inspectText, inspectUrls } from "./rules";
 import type { AnalysisOptions, AnalysisResult, Finding, RiskLevel } from "./types";
 import { unicodeMethodologyNote } from "./unicode";
 
@@ -48,7 +48,9 @@ function actionsFor(findings: readonly Finding[]): string[] {
 export function analyzeMessage(text: string, options: AnalysisOptions = {}): AnalysisResult {
   const normalizedText = text.trim();
   const findings = [
-    ...inspectUrls(normalizedText, options.knownMaliciousDomains ?? []),
+    ...inspectUrls(normalizedText, options.knownMaliciousDomains ?? [], options.knownMaliciousUrls ?? []),
+    ...inspectSender(options.sender, options.knownMaliciousPhones ?? []),
+    ...inspectPhones(normalizedText, options.knownMaliciousPhones ?? []),
     ...inspectText(normalizedText)
   ].sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity] || b.weight - a.weight);
 
@@ -64,17 +66,18 @@ export function analyzeMessage(text: string, options: AnalysisOptions = {}): Ana
     indicators: extractIndicators(normalizedText),
     actions: actionsFor([...findings]),
     coverage: [
-      "URLs, dominios, punycode, alfabetos mezclados y caracteres invisibles",
+      "URLs y dominios: estructura, punycode, alfabetos mezclados, caracteres invisibles y coincidencia exacta local",
       "Suplantación de marcas españolas y dominios conocidos",
       "Urgencia, amenazas, secreto, credenciales, pagos y control remoto",
       "Patrones recientes de smishing, phishing, vishing e inversión fraudulenta"
     ],
     limitations: [
       "El análisis es heurístico: puede equivocarse y no sustituye a INCIBE, tu banco ni las autoridades.",
+      "La identificación del remitente telefónico puede suplantarse; la numeración o un reporte no prueban quién llamó ni que un titular sea fraudulento.",
       "No visita enlaces, resuelve DNS ni analiza el contenido remoto de una web.",
       unicodeMethodologyNote,
       "Una ausencia en el registro de amenazas no demuestra que un dominio sea seguro."
     ],
-    ruleSetVersion: "lorica-es-2026.08.1"
+    ruleSetVersion: "lorica-es-2026.10.1"
   };
 }

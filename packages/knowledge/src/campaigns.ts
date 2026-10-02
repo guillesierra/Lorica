@@ -171,15 +171,15 @@ export const scamCampaigns: readonly ScamCampaign[] = [
     sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectada-campana-de-suplantacion-correos-por-medio-de-phishing-cuidado"
   },
   {
-    id: "incibe-aeat-documentos-2023-09",
-    publishedAt: "2023-09-28",
-    title: "Falsa incidencia de Renta que roba DNI y nómina",
-    impersonates: "Agencia Tributaria",
-    channels: ["SMS", "Web"],
-    techniques: ["robo de identidad", "falsa identificación Cl@ve", "smishing"],
-    requestedDataOrAction: "Subir fotografías del DNI y una nómina reciente",
-    severity: "media",
-    sourceTitle: "Campaña fraudulenta haciéndose pasar por la Agencia Tributaria",
-    sourceUrl: "https://www.incibe.es/ciudadania/avisos/detectada-campana-fraudulenta-haciendose-pasar-por-la-agencia-tributaria-para-el"
+    id: "guardia-civil-bec-2024-01",
+    publishedAt: "2024-01-23",
+    title: "Fraude al proveedor mediante facturas y correo intervenido",
+    impersonates: "Proveedor o interlocutor empresarial legítimo",
+    channels: ["Email"],
+    techniques: ["Business Email Compromise", "factura manipulada", "desvío de pagos", "mulas financieras"],
+    requestedDataOrAction: "Pagar facturas alteradas a una cuenta controlada por los estafadores",
+    severity: "crítica",
+    sourceTitle: "La Guardia Civil desarticula una red que estafó más de 112.000 euros a una empresa segoviana",
+    sourceUrl: "https://www.incibe.es/incibe-cert/publicaciones/bitacora-de-seguridad/la-guardia-civil-de-segovia-desarticula-una-red-de-estafadores-por"
   }
 ] as const;

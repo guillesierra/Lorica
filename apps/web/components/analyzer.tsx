@@ -28,6 +28,7 @@ const riskCopy: Record<RiskLevel, { label: string; title: string; color: string 
 
 export function Analyzer() {
   const [text, setText] = useState("");
+  const [sender, setSender] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -35,7 +36,11 @@ export function Analyzer() {
     event.preventDefault();
     if (text.trim().length < 4) return;
     setCopied(false);
-    setResult(analyzeMessage(text, { knownMaliciousDomains: threatSnapshot.domains }));
+    setResult(analyzeMessage(text, {
+      knownMaliciousDomains: threatSnapshot.domains,
+      knownMaliciousUrls: threatSnapshot.urls,
+      sender: sender.trim()
+    }));
   }
 
   async function copySummary() {
@@ -70,6 +75,18 @@ export function Analyzer() {
               spellCheck="false"
               aria-describedby="privacy-description"
             />
+            <label className="sender-label" htmlFor="sender">Teléfono o alias remitente (opcional)</label>
+            <input
+              id="sender"
+              className="sender-input"
+              inputMode="text"
+              value={sender}
+              onChange={(event) => setSender(event.target.value.slice(0, 80))}
+              placeholder="Ej.: +34 600 000 000 o nombre que aparece en el SMS"
+              autoComplete="off"
+              spellCheck="false"
+            />
+            <p className="sender-note">No hay una lista abierta y fiable de teléfonos fraudulentos integrada. En SMS con alias alfanumérico, contrástalo en la <a href="https://numeracionyoperadores.cnmc.es/alias" target="_blank" rel="noreferrer">consulta oficial de la CNMC</a>. El identificador de llamada puede suplantarse.</p>
             <div className="input-footer">
               <span id="privacy-description" className="char-count">{text.length.toLocaleString("es-ES")} / 12.000 · No visitamos los enlaces</span>
               <button className="primary-button" disabled={text.trim().length < 4} type="submit">

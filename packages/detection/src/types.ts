@@ -20,6 +20,9 @@ export interface Finding {
 
 export interface AnalysisOptions {
   knownMaliciousDomains?: readonly string[];
+  knownMaliciousUrls?: readonly string[];
+  knownMaliciousPhones?: readonly string[];
+  sender?: string;
   now?: Date;
 }
 

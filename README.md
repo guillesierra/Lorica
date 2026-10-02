@@ -13,8 +13,11 @@ navegador y no abre las URLs introducidas.
 - Señales de ingeniería social: urgencia, credenciales, pagos irreversibles,
   falsa inversión, suplantación familiar, callback y documentos de identidad.
 - Registro editorial de campañas españolas de 2023 a 2026 con fuentes oficiales.
-- Importación automatizada de indicadores activos con licencia compatible,
-  filtrados por señales relacionadas con España.
+- Registro sincronizado de dominios y rutas URL activas, con health/freshness
+  visible y procedencia MIT; se eliminan query strings para no republicar tokens.
+- Análisis local de remitentes y teléfonos; avisa de numeración de posible coste
+  especial, sin convertir un caller ID ni reportes comunitarios en acusaciones.
+- Acceso directo a la consulta oficial del Registro de Alias SMS/MMS/RCS de CNMC.
 - PWA instalable, responsive y desplegable en GitHub Pages.
 - Pantalla de cuenta preparada para conectar OAuth Google/Apple a una API futura;
   ningún secreto se incluye en el frontend estático.
@@ -51,10 +54,19 @@ $env:GITHUB_PAGES='true'; npm run build
 npm run sync:threats
 ```
 
-El sincronizador intenta dos endpoints de Phishing.Database, conserva la última
-instantánea verificada si ambos fallan y nunca inventa indicadores. El filtro
-`.es`/marcas españolas indica relevancia potencial, no atribución geográfica. La
-procedencia y el recuento quedan registrados en `data/threat-intel-report.json`.
+El sincronizador obtiene por separado los feeds activos de dominios y URLs de
+Phishing.Database, conserva la instantánea anterior si falla un feed, y registra
+el estado de cada fuente en `data/threat-intel-report.json` y en la página
+Inteligencia. Un fallo queda visible y marca el workflow como fallido. El filtro
+`.es`/marcas españolas indica relevancia potencial, no atribución geográfica. En
+las URLs se quitan parámetros y fragmentos para no publicar valores únicos;
+coincide por host y ruta, no certifica cada variante.
+
+No hay base pública fiable y abierta de teléfonos fraudulentos integrada. Para
+evitar falsos señalamientos, solo se muestra un aviso de coste para ciertos
+prefijos. El alias de remitente SMS se puede contrastar en la
+[consulta pública de CNMC](https://numeracionyoperadores.cnmc.es/alias); la
+descarga masiva de la CNMC requiere acceso autenticado registrado.
 
 ## Despliegue
 

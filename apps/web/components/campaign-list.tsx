@@ -7,7 +7,15 @@ const filters = ["Todas", "SMS", "Email", "WhatsApp", "Llamada", "Web"] as const
 
 export function CampaignList() {
   const [filter, setFilter] = useState<(typeof filters)[number]>("Todas");
-  const campaigns = useMemo(() => filter === "Todas" ? scamCampaigns : scamCampaigns.filter((campaign) => campaign.channels.includes(filter)), [filter]);
+  const [query, setQuery] = useState("");
+  const campaigns = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase("es");
+    return scamCampaigns.filter((campaign) => {
+      const matchesChannel = filter === "Todas" || campaign.channels.includes(filter);
+      const searchable = [campaign.title, campaign.impersonates, campaign.requestedDataOrAction, ...campaign.channels, ...campaign.techniques].join(" ").toLocaleLowerCase("es");
+      return matchesChannel && (!normalizedQuery || searchable.includes(normalizedQuery));
+    });
+  }, [filter, query]);
 
   return (
     <>
@@ -18,6 +26,9 @@ export function CampaignList() {
           </button>
         ))}
       </div>
+      <label className="campaign-search-label" htmlFor="campaign-search">Buscar por estafa, marca, petición o técnica</label>
+      <input id="campaign-search" className="campaign-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ej.: facturas, DGT, inversión…" />
+      <p className="campaign-count" aria-live="polite">{campaigns.length} de {scamCampaigns.length} casos</p>
       <div className="campaign-grid">
         {campaigns.map((campaign) => (
           <article className="campaign-card" key={campaign.id}>
@@ -32,10 +43,11 @@ export function CampaignList() {
               {campaign.channels.map((channel) => <span className="tag" key={channel}>{channel}</span>)}
               {campaign.techniques.map((technique) => <span className="tag" key={technique}>{technique}</span>)}
             </div>
-            <a className="source-link" href={campaign.sourceUrl} target="_blank" rel="noreferrer">Ver aviso oficial de INCIBE</a>
+            <a className="source-link" href={campaign.sourceUrl} target="_blank" rel="noreferrer">Ver aviso o fuente oficial</a>
           </article>
         ))}
       </div>
+      {campaigns.length === 0 ? <p className="empty-findings">No hay casos que coincidan con esos filtros.</p> : null}
     </>
   );
 }

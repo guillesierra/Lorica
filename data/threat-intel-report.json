@@ -1,12 +1,12 @@
 {
-  "lastAttemptAt": "2026-10-02T10:45:22.393Z",
-  "lastSuccessfulAt": "2026-10-02T10:45:22.393Z",
+  "lastAttemptAt": "2026-10-03T10:29:00.112Z",
+  "lastSuccessfulAt": "2026-10-03T10:29:00.112Z",
   "status": "synced-active-feed",
   "feeds": {
     "phishing-domains": {
       "url": "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/master/phishing-domains-ACTIVE.txt",
       "status": "ok",
-      "sourceLines": 392174
+      "sourceLines": 392179
     },
     "phishing-urls": {
       "url": "https://raw.githubusercontent.com/Phishing-Database/Phishing.Database/master/phishing-links-ACTIVE.txt",
@@ -14,7 +14,7 @@
       "sourceLines": 789055
     }
   },
-  "totalRelevantDomains": 2397,
+  "totalRelevantDomains": 2398,
   "totalRelevantUrls": 4668,
   "relevancePolicy": "TLD .es o token asociado a marcas/servicios españoles; no implica atribución geográfica confirmada",
   "errors": []
